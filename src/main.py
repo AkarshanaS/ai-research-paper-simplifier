@@ -1,6 +1,7 @@
 from src.arxiv_fetcher import fetch_arxiv_papers, fetch_paper_by_id
 from src.pdf_downloader import download_pdf
 from src.text_extractor import extract_text
+from src.chunking import chunk_text
 def main():
     print("Welcome to the ArXiv Paper Fetcher!")
     print("1. Search for papers")
@@ -67,6 +68,11 @@ def main():
             print("Exiting without downloading.")
         else:
             print("Invalid choice. Please enter 1 or 2.")
+    
+    chunks = chunk_text(text)
+    print(f"\nTotal chunks created: {len(chunks)}\n")
+    print("First chunk preview:\n")
+    print(chunks[0])  
 
 
 if __name__ == "__main__":
