@@ -1,5 +1,6 @@
 from src.arxiv_fetcher import fetch_arxiv_papers, fetch_paper_by_id
 from src.pdf_downloader import download_pdf
+from src.text_extractor import extract_text
 def main():
     print("Welcome to the ArXiv Paper Fetcher!")
     print("1. Search for papers")
@@ -27,7 +28,13 @@ def main():
         elif selection.isdigit() and 1 <= int(selection) <= len(results):
             selected_paper = results[int(selection) - 1]
             paper_id = selected_paper['url'].split('/')[-1]
-            download_pdf(paper_id)
+            file_path = download_pdf(paper_id)
+            if file_path:
+                text = extract_text(file_path)
+                print("\nFirst 500 words of extracted text:\n")
+                print(text[:500])
+            else:
+                print("Failed to download the PDF.")
             
         else:
             print("Invalid selection. Please enter a valid number.")                        
@@ -49,11 +56,17 @@ def main():
         print("\nDo you want to download this paper as a PDF? (y/n)")
         download_choice = input("Your choice: ").strip().lower()
         if download_choice == 'y':
-            download_pdf(paper_id)
-        else:
+            file_path = download_pdf(paper_id)
+            if file_path:
+                text = extract_text(file_path)
+                print("\n Extracted text...\n")
+                print("\nFirst 500 words of extracted text:\n")
+                print(text[:500])
+            else:
+                print("Failed to download the PDF.")
             print("Exiting without downloading.")
-    else:
-        print("Invalid choice. Please enter 1 or 2.")
+        else:
+            print("Invalid choice. Please enter 1 or 2.")
 
 
 if __name__ == "__main__":
