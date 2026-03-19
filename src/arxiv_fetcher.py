@@ -2,6 +2,17 @@ import arxiv
 client = arxiv.Client()
 
 def fetch_arxiv_papers(query, max_results=5):
+    """
+    Fetches papers from ArXiv based on a search query.
+
+    Args:
+        query (str): The search query to find relevant papers.
+        max_results (int): The maximum number of papers to fetch.
+        
+    Returns:
+        List[Dict]: A list of dictionaries containing paper information (title, authors, summary, published date, and URL).
+    
+    """
     search = arxiv.Search(
         query=query,
         max_results=max_results,

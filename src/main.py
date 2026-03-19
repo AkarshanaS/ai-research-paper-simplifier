@@ -2,6 +2,7 @@ from src.arxiv_fetcher import fetch_arxiv_papers, fetch_paper_by_id
 from src.pdf_downloader import download_pdf
 from src.text_extractor import extract_text
 from src.chunking import chunk_text
+from src.embeddings import create_embeddings
 def main():
     print("Welcome to the ArXiv Paper Fetcher!")
     print("1. Search for papers")
@@ -74,6 +75,9 @@ def main():
     print("First chunk preview:\n")
     print(chunks[0])  
 
+    embeddings = create_embeddings(chunks)
+    print(f"\nNumber of embeddings created: {len(embeddings)}")
+    print(f"Embedding shape: {len(embeddings[0])}")
 
 if __name__ == "__main__":
     main()
