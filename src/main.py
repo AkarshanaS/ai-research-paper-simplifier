@@ -5,6 +5,7 @@ from src.chunking import chunk_text
 from src.embeddings import create_embeddings
 from sentence_transformers import SentenceTransformer
 from src.vector_store import create_vector_store, search_similar_chunks
+from src.llm import generate_answer
 def main():
     print("Welcome to the ArXiv Paper Fetcher!")
     print("1. Search for papers")
@@ -74,23 +75,27 @@ def main():
     
     chunks = chunk_text(text)
     print(f"\nTotal chunks created: {len(chunks)}\n")
-    print("First chunk preview:\n")
-    print(chunks[0])  
-
+    
     model = SentenceTransformer('all-MiniLM-L6-v2')
     embeddings = create_embeddings(chunks, model)
-    print(f"\nNumber of embeddings created: {len(embeddings)}")
-    print(f"Embedding shape: {len(embeddings[0])}")
-
+    
     index = create_vector_store(embeddings)
-    print("\nTotal vectors created in FAISS index:", index.ntotal)
+    
+    while True:
+        query = input('\n\nAsk a question about the paper(Or type "exit" to quit): ')
+        if query.lower() == 'exit':
+            break
 
-    query = input('Ask a question about the paper: ')
-    results = search_similar_chunks(index, query, model, chunks)
-    print('\n Relevant chunks:\n')
-    for r in results:
-        print(r[:300])
-        print('-' * 50)
+        context_chunks = search_similar_chunks(index, query, model, chunks)
+        print('\n Retrieved context:\n')
+        for c in context_chunks:
+            print(c[:300])
+            print('-' * 50)
+
+        #LLM answer generation
+        answer = generate_answer(query, context_chunks)
+        print("\nAnswer:\n")
+        print(answer)
 
 if __name__ == "__main__":
     main()
