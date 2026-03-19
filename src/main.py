@@ -3,6 +3,8 @@ from src.pdf_downloader import download_pdf
 from src.text_extractor import extract_text
 from src.chunking import chunk_text
 from src.embeddings import create_embeddings
+from sentence_transformers import SentenceTransformer
+from src.vector_store import create_vector_store, search_similar_chunks
 def main():
     print("Welcome to the ArXiv Paper Fetcher!")
     print("1. Search for papers")
@@ -75,9 +77,20 @@ def main():
     print("First chunk preview:\n")
     print(chunks[0])  
 
-    embeddings = create_embeddings(chunks)
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    embeddings = create_embeddings(chunks, model)
     print(f"\nNumber of embeddings created: {len(embeddings)}")
     print(f"Embedding shape: {len(embeddings[0])}")
+
+    index = create_vector_store(embeddings)
+    print("\nTotal vectors created in FAISS index:", index.ntotal)
+
+    query = input('Ask a question about the paper: ')
+    results = search_similar_chunks(index, query, model, chunks)
+    print('\n Relevant chunks:\n')
+    for r in results:
+        print(r[:300])
+        print('-' * 50)
 
 if __name__ == "__main__":
     main()

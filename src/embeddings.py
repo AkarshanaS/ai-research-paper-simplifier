@@ -1,6 +1,4 @@
-from sentence_transformers import SentenceTransformer
-
-def create_embeddings(chunks):
+def create_embeddings(chunks, model):
     """Create embeddings for the documents.
     
     Args:
@@ -9,6 +7,6 @@ def create_embeddings(chunks):
     Returns:
         dict: A dictionary containing the document names as keys and their corresponding embeddings as values.
     """
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-    embeddings = model.encode(chunks)
+    
+    embeddings = model.encode(chunks,)
     return embeddings
