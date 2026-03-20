@@ -1,8 +1,10 @@
 from dotenv import load_dotenv
 import os
+import streamlit as st
 from openai import OpenAI
 load_dotenv()
-client = OpenAI()
+api_key = os.getenv("OPENAI_API_KEY") or st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key=api_key)
 
 def build_prompt(query, context_chunks):
     context = "\n\n".join(context_chunks)
@@ -11,7 +13,7 @@ You are an AI assistant that simplifies research papers.
 
 Rules:
 -Use ONLY the provided context to answer the question.
--If the answer is not in the context, say "I don't know."
+-If the answer is not in the context, say you don't know.
 -Explain complex terms in simple language.
 -Use bullet points for lists and key information.
 
