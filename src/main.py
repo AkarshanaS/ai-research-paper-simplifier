@@ -75,8 +75,7 @@ def main():
     chunks = chunk_text(text)
     print(f"\nTotal chunks created: {len(chunks)}\n")
     
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-    embeddings = create_embeddings(chunks, model)
+    embeddings = create_embeddings(chunks)
     
     index = create_vector_store(embeddings)
     
@@ -85,7 +84,7 @@ def main():
         if query.lower() == 'exit':
             break
 
-        context_chunks = search_similar_chunks(index, query, model, chunks)
+        context_chunks = search_similar_chunks(index, query, chunks)
         print('\n Retrieved context:\n')
         for c in context_chunks:
             print(c[:300])
@@ -98,15 +97,13 @@ def main():
 
 def process_paper(text):
     chunks = chunk_text(text)
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-    embeddings = create_embeddings(chunks, model)
+    embeddings = create_embeddings(chunks)
     index = create_vector_store(embeddings)
-    return index, model, chunks
+    return index, chunks
 
-def answer_question(query, index, model, chunks):
-    context_chunks = search_similar_chunks(index, query, model, chunks)
+def answer_question(query, index, chunks):
+    context_chunks = search_similar_chunks(index, query, chunks)
     answer = generate_answer(query, context_chunks)
     return answer, context_chunks
-    
 if __name__ == "__main__":
     main()

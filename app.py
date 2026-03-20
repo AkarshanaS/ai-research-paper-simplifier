@@ -62,7 +62,7 @@ with st.sidebar:
     st.write("• Ask about methodology/results")
 
     st.markdown("---")
-    st.write("Built with RAG + OpenAI + FAISS")
+    st.write("Built with RAG + OpenAI + Cosine similarity")
 
 # ---------------------------
 # LAYOUT
@@ -93,10 +93,9 @@ with col1:
                     file_path = download_pdf(paper_id)
                     text = extract_text(file_path)
 
-                    index, model, chunks = process_paper(text)
+                    index, chunks = process_paper(text)
 
                     st.session_state.index = index
-                    st.session_state.model = model
                     st.session_state.chunks = chunks
                     st.session_state.messages = []
 
@@ -122,7 +121,6 @@ with col2:
                 answer, sources = answer_question(
                     user_input,
                     st.session_state.index,
-                    st.session_state.model,
                     st.session_state.chunks
                 )
 
