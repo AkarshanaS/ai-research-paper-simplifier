@@ -8,5 +8,5 @@ def create_embeddings(chunks, model):
         dict: A dictionary containing the document names as keys and their corresponding embeddings as values.
     """
     
-    embeddings = model.encode(chunks,)
+    embeddings = model.encode(chunks)
     return embeddings

@@ -97,5 +97,17 @@ def main():
         print("\nAnswer:\n")
         print(answer)
 
+def process_paper(text):
+    chunks = chunk_text(text)
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    embeddings = create_embeddings(chunks, model)
+    index = create_vector_store(embeddings)
+    return index, model, chunks
+
+def answer_question(query, index, model, chunks):
+    context_chunks = search_similar_chunks(index, query, model, chunks)
+    answer = generate_answer(query, context_chunks)
+    return answer, context_chunks
+    
 if __name__ == "__main__":
     main()
