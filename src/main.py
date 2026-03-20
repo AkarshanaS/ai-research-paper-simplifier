@@ -3,7 +3,6 @@ from src.pdf_downloader import download_pdf
 from src.text_extractor import extract_text
 from src.chunking import chunk_text
 from src.embeddings import create_embeddings
-from sentence_transformers import SentenceTransformer
 from src.vector_store import create_vector_store, search_similar_chunks
 from src.llm import generate_answer
 def main():

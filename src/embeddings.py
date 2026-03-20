@@ -1,12 +1,16 @@
-def create_embeddings(chunks, model):
-    """Create embeddings for the documents.
+from openai import OpenAI
+import os
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+def create_embeddings(chunks):
+    embeddings = []
     
-    Args:
-        chunks (List[str]): A list of text chunks for which to create embeddings.
+    for chunk in chunks:
+        response = client.embeddings.create(
+            model="text-embedding-3-small",
+            input=chunk
+        )
+        embeddings.append(response.data[0].embedding)
     
-    Returns:
-        dict: A dictionary containing the document names as keys and their corresponding embeddings as values.
-    """
-    
-    embeddings = model.encode(chunks)
     return embeddings
