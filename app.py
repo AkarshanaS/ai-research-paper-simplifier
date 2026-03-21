@@ -11,18 +11,59 @@ st.set_page_config(page_title="AI Paper Simplifier", layout="wide")
 #Custom CSS
 st.markdown("""
 <style>
+/* Background */
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(135deg, #0E1117, #1A1D24);
+    color: white;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #111318;
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Glass Section */
 .section {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 18px;
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 20px;
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 25px;
+}
+
+/* Title */
+.main-title {
+    text-align: center;
+    font-size: 42px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #6C63FF, #00C9A7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Subtitle */
+.subtitle {
+    text-align: center;
+    color: #9CA3AF;
+    margin-bottom: 30px;
+}
+
+/* Chat bubbles */
+.chat-user {
+    background: rgba(108, 99, 255, 0.2);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.chat-bot {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 10px;
+    border-radius: 10px;
 }
 </style>
 """, unsafe_allow_html=True)
-st.markdown('<div class="section">', unsafe_allow_html=True)
-# content
-st.markdown('</div>', unsafe_allow_html=True)
 #header
 st.markdown('<div class="main-title">AI Research Paper Simplifier</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Understand research papers effortlessly using AI</div>', unsafe_allow_html=True)
@@ -53,9 +94,8 @@ col1, col2 = st.columns([1, 2])
 
 #left panel (search and process)
 with col1:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown('<div class="section">', unsafe_allow_html=True)
     st.subheader("🔍 Search Papers")
-
     query = st.text_input("Search for research papers")
 
     if query:
