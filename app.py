@@ -20,6 +20,9 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+st.markdown('<div class="section">', unsafe_allow_html=True)
+# content
+st.markdown('</div>', unsafe_allow_html=True)
 #header
 st.markdown('<div class="main-title">AI Research Paper Simplifier</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Understand research papers effortlessly using AI</div>', unsafe_allow_html=True)
