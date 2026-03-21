@@ -36,7 +36,6 @@ st.markdown("""
     padding: 22px;
     border-radius: 16px;
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.08);
     margin-bottom: 25px;
     height: 100%;
 }
@@ -70,7 +69,7 @@ div[data-baseweb="input"] input {
     color: white !important;
 }
 
-/* DROPDOWN FIX */
+/* DROPDOWN FIELD */
 div[data-baseweb="select"] > div {
     background-color: rgba(255,255,255,0.08) !important;
     border-radius: 10px !important;
