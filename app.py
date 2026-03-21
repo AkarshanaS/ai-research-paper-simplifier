@@ -22,7 +22,6 @@ st.markdown("""
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0E1117, #151922);
     border-right: 1px solid rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.85);
 }
 
 /* Sidebar text */
@@ -32,7 +31,7 @@ st.markdown("""
 
 /* Section */
 .section {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.05);
     padding: 22px;
     border-radius: 16px;
     backdrop-filter: blur(12px);
@@ -58,18 +57,34 @@ st.markdown("""
     margin-bottom: 35px;
 }
 
-/* INPUT */
-div[data-baseweb="input"] > div {
-    background-color: rgba(255,255,255,0.08) !important;
-    border-radius: 10px !important;
+/* Input */
+
+/* Remove outer container background */
+div[data-baseweb="input"] {
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
+/* Style */
+div[data-baseweb="input"] > div {
+    background-color: rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+    padding: 6px !important;
+    max-width: 95%;
+}
+
+/* Input text */
 div[data-baseweb="input"] input {
     background-color: transparent !important;
     color: white !important;
 }
 
-/* DROPDOWN FIELD */
+/* Placeholder */
+input::placeholder {
+    color: rgba(255,255,255,0.5) !important;
+}
+
+/* DROPDOWN */
 div[data-baseweb="select"] > div {
     background-color: rgba(255,255,255,0.08) !important;
     border-radius: 10px !important;
@@ -133,7 +148,7 @@ with col1:
     st.markdown('<div class="section">', unsafe_allow_html=True)
 
     st.subheader("🔍 Search Papers")
-    query = st.text_input("Search for research papers")
+    query = st.text_input("",placeholder="Search for research papers")
 
     if query:
         papers = fetch_arxiv_papers(query)
