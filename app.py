@@ -8,7 +8,7 @@ from src.llm import generate_answer
 #page config
 st.set_page_config(page_title="AI Paper Simplifier", layout="wide")
 
-#custom css
+#custom CSS
 st.markdown("""
 <style>
 
@@ -22,6 +22,12 @@ st.markdown("""
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0E1117, #151922);
     border-right: 1px solid rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.85);
+}
+
+/* Sidebar text */
+[data-testid="stSidebar"] * {
+    color: rgba(255,255,255,0.85) !important;
 }
 
 /* Section */
@@ -32,6 +38,7 @@ st.markdown("""
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255,255,255,0.08);
     margin-bottom: 25px;
+    height: 100%;
 }
 
 /* Title */
@@ -52,28 +59,28 @@ st.markdown("""
     margin-bottom: 35px;
 }
 
-/* Input fields  */
-div[data-baseweb="input"] input {
+/* INPUT */
+div[data-baseweb="input"] > div {
     background-color: rgba(255,255,255,0.08) !important;
-    color: white !important;
     border-radius: 10px !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
 }
 
+div[data-baseweb="input"] input {
+    background-color: transparent !important;
+    color: white !important;
+}
+
+/* DROPDOWN FIX */
+div[data-baseweb="select"] > div {
+    background-color: rgba(255,255,255,0.08) !important;
+    border-radius: 10px !important;
+    color: white !important;
+}
+
+/* CHAT INPUT */
 textarea {
     background-color: rgba(255,255,255,0.08) !important;
     color: white !important;
-}
-
-/* Placeholder */
-input::placeholder {
-    color: rgba(255,255,255,0.5) !important;
-}
-
-/* Dropdown */
-div[data-baseweb="select"] {
-    background-color: rgba(255,255,255,0.08) !important;
-    border-radius: 10px !important;
 }
 
 /* Buttons */
@@ -120,14 +127,13 @@ with st.sidebar:
     st.caption("Built with RAG + OpenAI + Cosine Similarity")
 
 #layout
-col1, col2 = st.columns([1, 2])
+col1, col2 = st.columns(2)  # equal width now
 
 #left panel
 with col1:
     st.markdown('<div class="section">', unsafe_allow_html=True)
 
     st.subheader("🔍 Search Papers")
-
     query = st.text_input("Search for research papers")
 
     if query:
@@ -152,7 +158,6 @@ with col1:
                     st.session_state.messages = []
 
                 st.success("✅ Paper ready!")
-
                 st.metric("Chunks", len(chunks))
                 st.metric("Embedding Dim", len(index[0]))
 
