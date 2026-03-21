@@ -1,4 +1,4 @@
-🧠 AI Research Paper Simplifier
+#🧠 AI Research Paper Simplifier
 
 An AI-powered application that simplifies research papers using Retrieval-Augmented Generation (RAG).
 Search for papers from arXiv, process them, and ask questions in natural language.
