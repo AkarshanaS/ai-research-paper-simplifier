@@ -5,12 +5,13 @@ from src.text_extractor import extract_text
 from src.main import process_paper, answer_question
 from src.llm import generate_answer
 
-#Page config
+#page config
 st.set_page_config(page_title="AI Paper Simplifier", layout="wide")
 
-#Custom CSS
+#custom CSS for styling
 st.markdown("""
 <style>
+
 /* Background */
 [data-testid="stAppViewContainer"] {
     background: linear-gradient(135deg, #0E1117, #1A1D24);
@@ -19,14 +20,14 @@ st.markdown("""
 
 /* Sidebar */
 [data-testid="stSidebar"] {
-    background-color: #111318;
+    background: linear-gradient(180deg, #0E1117, #151922);
     border-right: 1px solid rgba(255,255,255,0.05);
 }
 
-/* Glass Section */
+/* Section (Glass) */
 .section {
     background: rgba(255, 255, 255, 0.06);
-    padding: 20px;
+    padding: 22px;
     border-radius: 16px;
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255,255,255,0.08);
@@ -36,18 +37,41 @@ st.markdown("""
 /* Title */
 .main-title {
     text-align: center;
-    font-size: 42px;
+    font-size: 44px;
     font-weight: bold;
     background: linear-gradient(90deg, #6C63FF, #00C9A7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 0px 0px 20px rgba(108, 99, 255, 0.4);
 }
 
 /* Subtitle */
 .subtitle {
     text-align: center;
     color: #9CA3AF;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
+}
+
+/* Inputs */
+input, textarea {
+    background-color: rgba(255,255,255,0.08) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+/* Dropdown */
+div[data-baseweb="select"] {
+    background-color: rgba(255,255,255,0.08) !important;
+    border-radius: 10px !important;
+}
+
+/* Buttons */
+button {
+    border-radius: 10px !important;
+    background: linear-gradient(90deg, #6C63FF, #00C9A7) !important;
+    color: white !important;
+    border: none !important;
 }
 
 /* Chat bubbles */
@@ -62,8 +86,10 @@ st.markdown("""
     padding: 10px;
     border-radius: 10px;
 }
+
 </style>
 """, unsafe_allow_html=True)
+
 #header
 st.markdown('<div class="main-title">AI Research Paper Simplifier</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Understand research papers effortlessly using AI</div>', unsafe_allow_html=True)
@@ -72,7 +98,7 @@ st.markdown('<div class="subtitle">Understand research papers effortlessly using
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-#sidebar
+#sidebar settings
 with st.sidebar:
     st.title("⚙️ Settings")
 
@@ -89,14 +115,19 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Built with RAG + OpenAI + Cosine Similarity")
 
-#layout
+# ---------------------------
+# LAYOUT
+# ---------------------------
 col1, col2 = st.columns([1, 2])
 
-#left panel (search and process)
+#left panel - paper search and processing
 with col1:
     st.markdown('<div class="section">', unsafe_allow_html=True)
+
     st.subheader("🔍 Search Papers")
     query = st.text_input("Search for research papers")
+
+    st.markdown("<br>", unsafe_allow_html=True)
 
     if query:
         papers = fetch_arxiv_papers(query)
@@ -127,14 +158,15 @@ with col1:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-#right panel (chat interface)
+#right panel - chat interface
 with col2:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown('<div class="section">', unsafe_allow_html=True)
+
     st.subheader("💬 Chat with Paper")
 
     if "index" in st.session_state:
 
-        # 📄 Summary button
+        # Summary
         if st.button("📄 Summarize Paper"):
             with st.spinner("Generating summary..."):
                 summary = generate_answer(
@@ -148,7 +180,6 @@ with col2:
         if user_input:
             st.session_state.messages.append({"role": "user", "content": user_input})
 
-            # Modify query based on mode
             if mode == "Simple":
                 user_input = "Explain simply: " + user_input
             elif mode == "Technical":
@@ -179,7 +210,14 @@ with col2:
                             st.write(s)
 
     else:
-        st.info("👈 Search and process a paper first")
+        st.markdown("""
+        <div style='padding:20px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 12px;
+        text-align:center;'>
+        💬 Ask anything about the paper once it's loaded
+        </div>
+        """, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
