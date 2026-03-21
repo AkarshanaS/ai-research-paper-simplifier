@@ -8,7 +8,7 @@ from src.llm import generate_answer
 #page config
 st.set_page_config(page_title="AI Paper Simplifier", layout="wide")
 
-#custom CSS for styling
+#custom css
 st.markdown("""
 <style>
 
@@ -24,7 +24,7 @@ st.markdown("""
     border-right: 1px solid rgba(255,255,255,0.05);
 }
 
-/* Section (Glass) */
+/* Section */
 .section {
     background: rgba(255, 255, 255, 0.06);
     padding: 22px;
@@ -52,12 +52,22 @@ st.markdown("""
     margin-bottom: 35px;
 }
 
-/* Inputs */
-input, textarea {
+/* Input fields  */
+div[data-baseweb="input"] input {
     background-color: rgba(255,255,255,0.08) !important;
     color: white !important;
     border-radius: 10px !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+textarea {
+    background-color: rgba(255,255,255,0.08) !important;
+    color: white !important;
+}
+
+/* Placeholder */
+input::placeholder {
+    color: rgba(255,255,255,0.5) !important;
 }
 
 /* Dropdown */
@@ -68,23 +78,17 @@ div[data-baseweb="select"] {
 
 /* Buttons */
 button {
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     background: linear-gradient(90deg, #6C63FF, #00C9A7) !important;
     color: white !important;
     border: none !important;
+    font-weight: 600 !important;
+    padding: 8px 16px !important;
 }
 
-/* Chat bubbles */
-.chat-user {
-    background: rgba(108, 99, 255, 0.2);
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.chat-bot {
-    background: rgba(255, 255, 255, 0.08);
-    padding: 10px;
-    border-radius: 10px;
+button:hover {
+    transform: scale(1.03);
+    transition: 0.2s ease;
 }
 
 </style>
@@ -98,7 +102,7 @@ st.markdown('<div class="subtitle">Understand research papers effortlessly using
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-#sidebar settings
+#sidebar
 with st.sidebar:
     st.title("⚙️ Settings")
 
@@ -115,19 +119,16 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Built with RAG + OpenAI + Cosine Similarity")
 
-# ---------------------------
-# LAYOUT
-# ---------------------------
+#layout
 col1, col2 = st.columns([1, 2])
 
-#left panel - paper search and processing
+#left panel
 with col1:
     st.markdown('<div class="section">', unsafe_allow_html=True)
 
     st.subheader("🔍 Search Papers")
-    query = st.text_input("Search for research papers")
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    query = st.text_input("Search for research papers")
 
     if query:
         papers = fetch_arxiv_papers(query)
@@ -152,13 +153,12 @@ with col1:
 
                 st.success("✅ Paper ready!")
 
-                # Metrics
                 st.metric("Chunks", len(chunks))
                 st.metric("Embedding Dim", len(index[0]))
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-#right panel - chat interface
+#right panel
 with col2:
     st.markdown('<div class="section">', unsafe_allow_html=True)
 
@@ -166,7 +166,6 @@ with col2:
 
     if "index" in st.session_state:
 
-        # Summary
         if st.button("📄 Summarize Paper"):
             with st.spinner("Generating summary..."):
                 summary = generate_answer(
@@ -198,7 +197,6 @@ with col2:
                 "sources": sources
             })
 
-        # Chat display
         for msg in st.session_state.messages:
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
@@ -211,10 +209,11 @@ with col2:
 
     else:
         st.markdown("""
-        <div style='padding:20px;
-        background: rgba(255,255,255,0.05);
-        border-radius: 12px;
-        text-align:center;'>
+        <div style='padding:22px;
+        background: linear-gradient(90deg, rgba(108,99,255,0.15), rgba(0,201,167,0.1));
+        border-radius: 14px;
+        text-align:center;
+        font-size:16px;'>
         💬 Ask anything about the paper once it's loaded
         </div>
         """, unsafe_allow_html=True)
