@@ -1,4 +1,4 @@
-#🧠 AI Research Paper Simplifier
+## 🧠AI Research Paper Simplifier
 
 An AI-powered application that simplifies complex academic research using **Retrieval-Augmented Generation (RAG)**. Users can search for papers directly from arXiv, process them in real-time, and interact with the content using natural language.
 
@@ -51,14 +51,14 @@ An AI-powered application that simplifies complex academic research using **Retr
     cd ai-research-paper-simplifier
     pip install -r requirements.txt
 2. **Install dependencies:**
-    '''bash
+    ```bash
     pip install -r requirements.txt
 
 3. **Configure Environment Variables:**
     OPENAI_API_KEY=your_api_key_here
 
 4. **Run the app:**
-    '''bash
+    ```bash
     streamlit run app.py
 
 ## 💥 Challenges & Solutions
