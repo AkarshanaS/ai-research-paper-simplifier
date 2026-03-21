@@ -11,35 +11,15 @@ st.set_page_config(page_title="AI Paper Simplifier", layout="wide")
 #Custom CSS
 st.markdown("""
 <style>
-body {
-    background-color: #0E1117;
-}
-.block-container {
-    padding-top: 2rem;
-}
-.main-title {
-    text-align: center;
-    font-size: 44px;
-    font-weight: bold;
-    background: linear-gradient(90deg, #6C63FF, #00C9A7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.subtitle {
-    text-align: center;
-    color: #AAAAAA;
-    margin-bottom: 25px;
-}
-.card {
-    background-color: #1C1F26;
-    padding: 20px;
-    border-radius: 14px;
+.section {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 18px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
     margin-bottom: 20px;
-    box-shadow: 0px 4px 20px rgba(0,0,0,0.3);
 }
 </style>
 """, unsafe_allow_html=True)
-
 #header
 st.markdown('<div class="main-title">AI Research Paper Simplifier</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Understand research papers effortlessly using AI</div>', unsafe_allow_html=True)
