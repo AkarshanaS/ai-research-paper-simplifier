@@ -36,7 +36,6 @@ st.markdown("""
     border-radius: 16px;
     backdrop-filter: blur(12px);
     margin-bottom: 25px;
-    height: 100%;
 }
 
 /* Title */

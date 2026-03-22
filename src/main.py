@@ -105,5 +105,6 @@ def answer_question(query, index, chunks):
     context_chunks = search_similar_chunks(index, query, chunks)
     answer = generate_answer(query, context_chunks)
     return answer, context_chunks
+
 if __name__ == "__main__":
     main()
