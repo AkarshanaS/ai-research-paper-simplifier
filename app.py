@@ -144,12 +144,11 @@ col1, col2 = st.columns(2)  # equal width now
 
 #left panel
 with col1:
-    st.markdown('<div class="section">', unsafe_allow_html=True)
-
     st.subheader("🔍 Search Papers")
     query = st.text_input("",placeholder="Search for research papers")
 
     if query:
+        st.markdown('<div class="section">', unsafe_allow_html=True)
         papers = fetch_arxiv_papers(query)
 
         if papers:
@@ -178,11 +177,10 @@ with col1:
 
 #right panel
 with col2:
-    st.markdown('<div class="section">', unsafe_allow_html=True)
-
     st.subheader("💬 Chat with Paper")
 
     if "index" in st.session_state:
+        st.markdown('<div class="section">', unsafe_allow_html=True)
 
         if st.button("📄 Summarize Paper"):
             with st.spinner("Generating summary..."):
