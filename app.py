@@ -124,7 +124,7 @@ if "messages" not in st.session_state:
 
 #sidebar
 with st.sidebar:
-    st.title("⚙️ Settings")
+    st.title("📄 Summarize Paper")
 
     mode = st.selectbox(
         "Explanation Style",
@@ -132,15 +132,15 @@ with st.sidebar:
     )
 
     st.markdown("### 💡 Example Questions")
-    st.write("• Explain this paper simply")
-    st.write("• What problem does it solve?")
-    st.write("• What are key contributions?")
+    st.write("• Why does this research matter?")
+    st.write("• What is the 'big idea' here?")
+    st.write("• Explain the math in Section 3")
 
     st.markdown("---")
     st.caption("Built with RAG + OpenAI + Cosine Similarity")
 
 #layout
-col1, col2 = st.columns(2)  # equal width now
+col1, col2 = st.columns(2)  # equal width 
 
 #left panel
 with col1:
@@ -148,7 +148,7 @@ with col1:
     query = st.text_input("",placeholder="Search for research papers")
 
     if query:
-        st.markdown('<div class="section">', unsafe_allow_html=True)
+        
         papers = fetch_arxiv_papers(query)
 
         if papers:
@@ -180,8 +180,7 @@ with col2:
     st.subheader("💬 Chat with Paper")
 
     if "index" in st.session_state:
-        st.markdown('<div class="section">', unsafe_allow_html=True)
-
+        
         if st.button("📄 Summarize Paper"):
             with st.spinner("Generating summary..."):
                 summary = generate_answer(
@@ -196,9 +195,11 @@ with col2:
             st.session_state.messages.append({"role": "user", "content": user_input})
 
             if mode == "Simple":
-                user_input = "Explain simply: " + user_input
+                user_input = "Explain this simply for a non-expert: " + user_input
             elif mode == "Technical":
-                user_input = "Give a detailed technical explanation: " + user_input
+                user_input = "Provide a rigorous, technical explanation with formulas or specific data:" + user_input
+            else :
+                user_input = "Provide a balanced, professional summary of:" + user_input
 
             with st.spinner("Thinking..."):
                 answer, sources = answer_question(
@@ -218,10 +219,11 @@ with col2:
                 st.markdown(msg["content"])
 
                 if msg["role"] == "assistant" and "sources" in msg:
-                    with st.expander("📚 Sources"):
+                    with st.expander("📚 Sources & Citationss"):
                         for i, s in enumerate(msg["sources"]):
-                            st.write(f"**Chunk {i+1}:**")
-                            st.write(s)
+                            st.markdown(f"**Source {i+1} — Page {s['page']}**")
+                            st.caption(s['text'])
+                            st.divider()
 
     else:
         st.markdown("""

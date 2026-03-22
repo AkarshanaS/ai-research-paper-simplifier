@@ -95,15 +95,17 @@ def main():
         print("\nAnswer:\n")
         print(answer)
 
-def process_paper(text):
-    chunks = chunk_text(text)
-    embeddings = create_embeddings(chunks)
+def process_paper(pages_data):
+    chunks = chunk_text(pages_data)
+    texts_only = [c["text"] for c in chunks]
+    embeddings = create_embeddings(texts_only)
     index = create_vector_store(embeddings)
     return index, chunks
 
 def answer_question(query, index, chunks):
     context_chunks = search_similar_chunks(index, query, chunks)
-    answer = generate_answer(query, context_chunks)
+    texts_for_llm = [c["text"] for c in context_chunks]
+    answer = generate_answer(query, texts_for_llm)
     return answer, context_chunks
 
 if __name__ == "__main__":

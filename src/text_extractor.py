@@ -11,9 +11,10 @@ def extract_text(file_path):
         str: The extracted text.
     """
     doc = fitz.open(file_path)
-    text = ""
-    for page in doc:
-        text += page.get_text()
-    doc.close()
-    return text 
-
+    pages_data = []
+    for i, page in enumerate(doc):
+        pages_data.append({
+            "text": page.get_text(),
+            "page_label": i + 1
+        })
+    return pages_data
