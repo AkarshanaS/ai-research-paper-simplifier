@@ -4,13 +4,11 @@ import os
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def create_embeddings(chunks):
-    embeddings = []
+    texts = [chunk["text"] for chunk in chunks]
 
-    for chunk in chunks:
-        response = client.embeddings.create(
-            model="text-embedding-3-small",
-            input=chunk
-        )
-        embeddings.append(response.data[0].embedding)
+    response = client.embeddings.create(
+        model="text-embedding-3-small",
+        input=texts
+    )
 
-    return embeddings
+    return [item.embedding for item in response.data]

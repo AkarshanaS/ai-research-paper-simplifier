@@ -18,18 +18,21 @@ def build_prompt(query, context_chunks, mode):
     prompt = f"""
 You are an AI assistant that simplifies research papers.
 
+Style Instruction:
+{mode_instruction}
+
 Rules:
 -Use ONLY the provided context to answer the question.
 -If the answer is not in the context, say you don't know.
 -Explain clearly and structure your response
 -Use bullet points for lists and key information.
--
+
 
 Context:{context}\n\nQuestion: {query}\nAnswer:"""
     return prompt
 
-def generate_answer(query, context_chunks):
-    prompt = build_prompt(query, context_chunks)
+def generate_answer(query, context_chunks, mode):
+    prompt = build_prompt(query, context_chunks, mode)
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "system", "content": "You simplify research papers."},

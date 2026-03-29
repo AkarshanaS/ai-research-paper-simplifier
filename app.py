@@ -3,7 +3,15 @@ from src.arxiv_fetcher import fetch_arxiv_papers
 from src.pdf_downloader import download_pdf
 from src.text_extractor import extract_text
 from src.main import process_paper, answer_question, summarize_paper
-from src.llm import generate_answer
+from services.paper_service import load_paper
+
+@st.cache_data(show_spinner=False)
+def cached_fetch(query):
+    return fetch_arxiv_papers(query)
+
+@st.cache_resource
+def cached_load_paper(paper_id):
+    return load_paper(paper_id)
 
 def extract_arxiv_id(input_text):
     input_text = input_text.strip()
@@ -171,7 +179,7 @@ with col1:
             if query:
                 if "last_query" not in st.session_state or st.session_state.last_query != query:
                     with st.spinner("Searching papers..."):
-                        st.session_state.papers = fetch_arxiv_papers(query)
+                        st.session_state.papers = cached_fetch(query)
                         st.session_state.last_query = query
 
         papers = st.session_state.papers
@@ -187,10 +195,8 @@ with col1:
                 paper_id = paper['url'].split('/')[-1]
 
                 with st.spinner("Processing paper..."):
-                    file_path = download_pdf(paper_id)
-                    text = extract_text(file_path)
-
-                    index, chunks = process_paper(text)
+                    
+                    index, chunks = cached_load_paper(paper_id=paper_id)
 
                     st.session_state.index = index
                     st.session_state.chunks = chunks

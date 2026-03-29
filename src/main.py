@@ -110,18 +110,15 @@ def answer_question(query, index, chunks, mode):
     return answer, context_chunks
 
 def summarize_paper(index, chunks, mode):
-    """
-    Generates a summary of the paper using RAG + mode-aware prompting
-
-    """
+    
     context_chunks = search_similar_chunks(index, "Summarize the paper", chunks, top_k=7)
     texts = [c["text"] for c in context_chunks]
-    prompt = build_prompt(
-        task_type="summary",
+    summary = generate_answer(
+        query="Summarize the paper",
         context_chunks = texts,
         mode=mode
     )
-    summary = generate_answer(prompt)
+    
     return summary, context_chunks
     
 if __name__ == "__main__":
