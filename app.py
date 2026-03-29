@@ -45,7 +45,7 @@ st.markdown("""
 
 /* Section */
 .section {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     padding: 22px;
     border-radius: 16px;
     backdrop-filter: blur(12px);
@@ -123,6 +123,21 @@ button {
 button:hover {
     transform: scale(1.03);
     transition: 0.2s ease;
+}
+            
+/* Chat text visibility */
+[data-testid="stChatMessage"] {
+    color: #FFFFFF !important;
+}
+
+[data-testid="stChatMessage"] p {
+    color: #F9FAFB !important;
+    font-weight: 400;
+}
+
+/* Markdown text */
+.stMarkdown {
+    color: #E5E7EB !important;
 }
 
 </style>
@@ -272,7 +287,18 @@ with col2:
 
         for msg in st.session_state.messages:
             with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
+                st.markdown(
+                    f"""
+                    <div style='
+                    background: rgba(255, 255, 255, 0.06);
+                    padding: 16px;
+                    color: #F9FAFB;
+                    line-height: 1.6;
+                    '>
+                    {msg["content"]}
+                    </div>
+                    """, unsafe_allow_html=True
+                )
 
                 if msg["role"] == "assistant" and "sources" in msg:
                     with st.expander("📚 Sources & Citationss"):
