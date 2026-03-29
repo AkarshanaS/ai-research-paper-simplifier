@@ -40,7 +40,22 @@ st.markdown("""
 
 /* Sidebar text */
 [data-testid="stSidebar"] * {
-    color: rgba(255,255,255,0.85) !important;
+    color: #E5E7EB !important;
+}
+            
+/* Labels and normal text */
+label, p, span {
+    color: #E5E7EB !important;
+}
+            
+/* Input field text */
+input {
+    color: #F9FAFB !important;
+}
+
+/* Input background */
+div[data-baseweb="input"] > div {
+    background-color: rgba(255,255,255,0.12) !important;
 }
 
 /* Section */
@@ -138,6 +153,22 @@ button:hover {
 /* Markdown text */
 .stMarkdown {
     color: #E5E7EB !important;
+}
+            
+/* Chat input text fix */
+textarea, input {
+    color: #111827 !important;   /* dark text */
+    font-weight: 500;
+}
+
+/* Chat input background */
+textarea {
+    background-color: #F9FAFB !important;
+}
+
+/* Placeholder */
+textarea::placeholder {
+    color: #6B7280 !important;
 }
 
 </style>
