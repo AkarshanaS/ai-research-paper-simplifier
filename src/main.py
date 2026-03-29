@@ -98,8 +98,7 @@ def main():
 
 def process_paper(pages_data):
     chunks = chunk_text(pages_data)
-    texts_only = [c["text"] for c in chunks]
-    embeddings = create_embeddings(texts_only)
+    embeddings = create_embeddings(chunks)
     index = create_vector_store(embeddings)
     return index, chunks
 
