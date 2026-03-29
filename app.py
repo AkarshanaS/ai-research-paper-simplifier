@@ -5,6 +5,12 @@ from src.text_extractor import extract_text
 from src.main import process_paper, answer_question, summarize_paper
 from src.llm import generate_answer
 
+def extract_arxiv_id(input_text):
+    input_text = input_text.strip()
+    if "arxiv.org" in input_text:
+        return input_text.strip().split("/")[-1]
+    return input_text
+
 #page config
 st.set_page_config(page_title="AI Paper Simplifier", layout="wide")
 
@@ -144,7 +150,7 @@ col1, col2 = st.columns(2)  # equal width
 
 #left panel
 with col1:
-    st.subheader("🔍 Search Papers")
+    st.subheader("🔍 Load Paper")
 
     # Initialize session state
     if "papers" not in st.session_state:
@@ -153,47 +159,72 @@ with col1:
     if "selected_paper" not in st.session_state:
         st.session_state.selected_paper = None
 
-    # Input
-    query = st.text_input("Search Papers", placeholder="e.g. transformers")
+    input_type = st.radio(
+        "Choose Input Method",
+        ["Search Papers", "Enter arXiv ID / URL"]
+    )
 
-    # Search button
-    if st.button("🔍 Search"):
-        if query:
-            with st.spinner("Searching papers..."):
-                st.session_state.papers = fetch_arxiv_papers(query)
+    if input_type == "Search Papers":
+        query = st.text_input("Search Papers", placeholder="e.g. transformers")
 
-    papers = st.session_state.papers
+        if st.button("🔍 Search"):
+            if query:
+                if "last_query" not in st.session_state or st.session_state.last_query != query:
+                    with st.spinner("Searching papers..."):
+                        st.session_state.papers = fetch_arxiv_papers(query)
+                        st.session_state.last_query = query
 
-    # Show results
-    if papers:
-        titles = [p['title'] for p in papers]
+        papers = st.session_state.papers
 
-        selected_title = st.selectbox("Select a paper", titles)
+        if papers:
+            titles = [p['title'] for p in papers]
+            selected_title = st.selectbox("Select a paper", titles)
 
-        # Store selected paper
-        st.session_state.selected_paper = papers[titles.index(selected_title)]
+            st.session_state.selected_paper = papers[titles.index(selected_title)]
 
-        # Process button
-        if st.button("🚀 Process Paper"):
-            paper = st.session_state.selected_paper
-            paper_id = paper['url'].split('/')[-1]
+            if st.button("Process Paper"):
+                paper = st.session_state.selected_paper
+                paper_id = paper['url'].split('/')[-1]
 
-            with st.spinner("Processing paper..."):
-                file_path = download_pdf(paper_id)
-                text = extract_text(file_path)
+                with st.spinner("Processing paper..."):
+                    file_path = download_pdf(paper_id)
+                    text = extract_text(file_path)
 
-                index, chunks = process_paper(text)
+                    index, chunks = process_paper(text)
 
-                st.session_state.index = index
-                st.session_state.chunks = chunks
-                st.session_state.messages = []
+                    st.session_state.index = index
+                    st.session_state.chunks = chunks
+                    st.session_state.messages = []
 
-            st.success("✅ Paper ready!")
-            st.metric("Chunks", len(chunks))
-            st.metric("Embedding Dim", len(index[0]))
+                st.success("✅ Paper ready!")
+                st.metric("Chunks", len(chunks))
+                st.metric("Embedding Dim", len(index[0]))
 
+    #id/url mode
     else:
-        st.info("Search for a topic to find research papers.")
+        paper_input = st.text_input(
+            "Enter arXiv ID or URL",
+            placeholder="e.g. 1706.03762 or https://arxiv.org/abs/1706.03762"
+        )
+
+        if st.button("Process Paper"):
+            if paper_input:
+                paper_id = extract_arxiv_id(paper_input)
+
+                with st.spinner("Processing paper..."):
+                    file_path = download_pdf(paper_id)
+                    text = extract_text(file_path)
+
+                    index, chunks = process_paper(text)
+
+                    st.session_state.index = index
+                    st.session_state.chunks = chunks
+                    st.session_state.messages = []
+
+                st.success("✅ Paper ready!")
+                st.metric("Chunks", len(chunks))
+                st.metric("Embedding Dim", len(index[0]))
+
 #right panel
 with col2:
     st.subheader("💬 Chat with Paper")
