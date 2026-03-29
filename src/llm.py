@@ -31,7 +31,7 @@ Rules:
 Context:{context}\n\nQuestion: {query}\nAnswer:"""
     return prompt
 
-def generate_answer(query, context_chunks, mode):
+def generate_answer(query, context_chunks, mode="Normal"):
     prompt = build_prompt(query, context_chunks, mode)
     response = client.chat.completions.create(
         model="gpt-4o-mini",
