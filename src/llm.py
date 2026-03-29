@@ -6,16 +6,24 @@ load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY") or st.secrets["OPENAI_API_KEY"]
 client = OpenAI(api_key=api_key)
 
-def build_prompt(query, context_chunks):
+MODE_INSTRUCTIONS = {
+    "Simple": "Explain in very simple terms for a beginner. Avoid jargon.",
+    "Normal": "Explain clearly with balanced technical depth.",
+    "Technical": "Provide a detailed technical explanation including methods, assumptions, and specifics."
+}
+
+def build_prompt(query, context_chunks, mode):
     context = "\n\n".join(context_chunks)
+    mode_instruction = MODE_INSTRUCTIONS.get(mode, MODE_INSTRUCTIONS["Normal"])
     prompt = f"""
 You are an AI assistant that simplifies research papers.
 
 Rules:
 -Use ONLY the provided context to answer the question.
 -If the answer is not in the context, say you don't know.
--Explain complex terms in simple language.
+-Explain clearly and structure your response
 -Use bullet points for lists and key information.
+-
 
 Context:{context}\n\nQuestion: {query}\nAnswer:"""
     return prompt

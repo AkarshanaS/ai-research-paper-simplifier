@@ -103,10 +103,10 @@ def process_paper(pages_data):
     index = create_vector_store(embeddings)
     return index, chunks
 
-def answer_question(query, index, chunks):
+def answer_question(query, index, chunks, mode):
     context_chunks = search_similar_chunks(index, query, chunks)
     texts_for_llm = [c["text"] for c in context_chunks]
-    answer = generate_answer(query, texts_for_llm)
+    answer = generate_answer(query, texts_for_llm, mode)
     return answer, context_chunks
 
 def summarize_paper(index, chunks, mode):

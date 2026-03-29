@@ -145,36 +145,55 @@ col1, col2 = st.columns(2)  # equal width
 #left panel
 with col1:
     st.subheader("🔍 Search Papers")
-    query = st.text_input("",placeholder="Search for research papers")
 
-    if query:
-        
-        papers = fetch_arxiv_papers(query)
+    # Initialize session state
+    if "papers" not in st.session_state:
+        st.session_state.papers = []
 
-        if papers:
-            titles = [p['title'] for p in papers]
-            selected = st.selectbox("Select a paper", titles)
+    if "selected_paper" not in st.session_state:
+        st.session_state.selected_paper = None
 
-            if st.button("🚀 Process Paper"):
-                paper = papers[titles.index(selected)]
-                paper_id = paper['url'].split('/')[-1]
+    # Input
+    query = st.text_input("Search Papers", placeholder="e.g. transformers")
 
-                with st.spinner("Processing paper..."):
-                    file_path = download_pdf(paper_id)
-                    text = extract_text(file_path)
+    # Search button
+    if st.button("🔍 Search"):
+        if query:
+            with st.spinner("Searching papers..."):
+                st.session_state.papers = fetch_arxiv_papers(query)
 
-                    index, chunks = process_paper(text)
+    papers = st.session_state.papers
 
-                    st.session_state.index = index
-                    st.session_state.chunks = chunks
-                    st.session_state.messages = []
+    # Show results
+    if papers:
+        titles = [p['title'] for p in papers]
 
-                st.success("✅ Paper ready!")
-                st.metric("Chunks", len(chunks))
-                st.metric("Embedding Dim", len(index[0]))
+        selected_title = st.selectbox("Select a paper", titles)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        # Store selected paper
+        st.session_state.selected_paper = papers[titles.index(selected_title)]
 
+        # Process button
+        if st.button("🚀 Process Paper"):
+            paper = st.session_state.selected_paper
+            paper_id = paper['url'].split('/')[-1]
+
+            with st.spinner("Processing paper..."):
+                file_path = download_pdf(paper_id)
+                text = extract_text(file_path)
+
+                index, chunks = process_paper(text)
+
+                st.session_state.index = index
+                st.session_state.chunks = chunks
+                st.session_state.messages = []
+
+            st.success("✅ Paper ready!")
+            st.metric("Chunks", len(chunks))
+            st.metric("Embedding Dim", len(index[0]))
+
+    else:
+        st.info("Search for a topic to find research papers.")
 #right panel
 with col2:
     st.subheader("💬 Chat with Paper")
@@ -186,7 +205,7 @@ with col2:
                 summary, sources = summarize_paper(
                     st.session_state.index,
                     st.session_state.chunks,
-                    mode
+                    mode = mode
                 )
             
             st.session_state.messages.append({
@@ -200,18 +219,12 @@ with col2:
         if user_input:
             st.session_state.messages.append({"role": "user", "content": user_input})
 
-            if mode == "Simple":
-                user_input = "Explain this simply for a non-expert: " + user_input
-            elif mode == "Technical":
-                user_input = "Provide a rigorous, technical explanation with formulas or specific data:" + user_input
-            elif mode == "Normal":
-                user_input = "Explain this clearly with balanced technical depth:" + user_input
-
             with st.spinner("Thinking..."):
                 answer, sources = answer_question(
                     user_input,
                     st.session_state.index,
-                    st.session_state.chunks
+                    st.session_state.chunks,
+                    mode = mode
                 )
 
             st.session_state.messages.append({
