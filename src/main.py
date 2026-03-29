@@ -110,8 +110,8 @@ def answer_question(query, index, chunks, mode):
 
 def summarize_paper(index, chunks, mode):
     
-    context_chunks = search_similar_chunks(index, "Summarize the paper", chunks, top_k=7)
-    texts = [c["text"] for c in context_chunks]
+    context_chunks = search_similar_chunks(index, "main idea contributions method results conclusion", chunks, top_k=10)
+    texts = [c["text"] for c in chunks[:15]]
     summary = generate_answer(
         query="Summarize the paper",
         context_chunks = texts,
