@@ -4,7 +4,8 @@ from src.text_extractor import extract_text
 from src.chunking import chunk_text
 from src.embeddings import create_embeddings
 from src.vector_store import create_vector_store, search_similar_chunks
-from src.llm import generate_answer
+from src.llm import generate_answer, build_prompt
+
 def main():
     print("Welcome to the ArXiv Paper Fetcher!")
     print("1. Search for papers")
@@ -108,5 +109,20 @@ def answer_question(query, index, chunks):
     answer = generate_answer(query, texts_for_llm)
     return answer, context_chunks
 
+def summarize_paper(index, chunks, mode):
+    """
+    Generates a summary of the paper using RAG + mode-aware prompting
+
+    """
+    context_chunks = search_similar_chunks(index, "Summarize the paper", chunks, top_k=7)
+    texts = [c["text"] for c in context_chunks]
+    prompt = build_prompt(
+        task_type="summary",
+        context_chunks = texts,
+        mode=mode
+    )
+    summary = generate_answer(prompt)
+    return summary, context_chunks
+    
 if __name__ == "__main__":
     main()

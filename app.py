@@ -2,7 +2,7 @@ import streamlit as st
 from src.arxiv_fetcher import fetch_arxiv_papers
 from src.pdf_downloader import download_pdf
 from src.text_extractor import extract_text
-from src.main import process_paper, answer_question
+from src.main import process_paper, answer_question, summarize_paper
 from src.llm import generate_answer
 
 #page config
@@ -183,11 +183,17 @@ with col2:
         
         if st.button("📄 Summarize Paper"):
             with st.spinner("Generating summary..."):
-                summary = generate_answer(
-                    "Summarize this paper in simple terms",
-                    st.session_state.chunks[:5]
+                summary, sources = summarize_paper(
+                    st.session_state.index,
+                    st.session_state.chunks,
+                    mode
                 )
-            st.success(summary)
+            
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": summary,
+                "sources": sources
+                })
 
         user_input = st.chat_input("Ask something about the paper...")
 
@@ -198,8 +204,8 @@ with col2:
                 user_input = "Explain this simply for a non-expert: " + user_input
             elif mode == "Technical":
                 user_input = "Provide a rigorous, technical explanation with formulas or specific data:" + user_input
-            else :
-                user_input = "Provide a balanced, professional summary of:" + user_input
+            elif mode == "Normal":
+                user_input = "Explain this clearly with balanced technical depth:" + user_input
 
             with st.spinner("Thinking..."):
                 answer, sources = answer_question(

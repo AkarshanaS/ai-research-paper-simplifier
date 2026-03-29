@@ -8,7 +8,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 def create_vector_store(embeddings):
     return np.array(embeddings)
 
-def search_similar_chunks(index, query, chunks, top_k=3):
+def search_similar_chunks(index, query, chunks, top_k=5):
     query_embedding = client.embeddings.create(
         model="text-embedding-3-small",
         input=query
