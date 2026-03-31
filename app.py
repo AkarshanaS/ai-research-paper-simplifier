@@ -43,6 +43,54 @@ html, body, [data-testid="stAppViewContainer"] {
 
 [data-testid="stSidebar"] { display: none; }
 
+/* ── Hide Streamlit toolbar clutter (contrast_mode, theme switcher, etc.) ── */
+[data-testid="stToolbar"],
+[data-testid="stDecoration"],
+[data-testid="stStatusWidget"],
+header[data-testid="stHeader"],
+#MainMenu,
+footer { display: none !important; }
+
+/* ── Custom chat bubbles ── */
+.chat-bubble {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.chat-bubble.user { flex-direction: row-reverse; }
+
+.chat-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+}
+
+.chat-avatar.user-av { background: var(--surface2); }
+.chat-avatar.bot-av  { background: rgba(232,168,48,0.12); border-color: rgba(232,168,48,0.3); }
+
+.chat-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    max-width: 85%;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+}
+
+.chat-bubble.user .chat-body {
+    background: var(--surface2);
+}
+
 [data-testid="stMainBlockContainer"] {
     padding: 2rem 3rem;
     max-width: 1200px;
@@ -433,7 +481,7 @@ with col2:
             text = re.sub(r'^#{1,4}\s*', '', text)
             return text.strip()
 
-        # Split on blank lines 
+        # Split on blank lines — works regardless of whether sections
         # start with letters, *, #, or any other character.
         rows = []
         sections = re.split(r'\n\s*\n', result.strip())
@@ -492,7 +540,7 @@ with col2:
     # ── Paper loaded ──
     if "index" in st.session_state:
 
-        # ── SUMMARY ──
+        # ── SUMMARY (separate from chat) ──
         st.markdown('<p class="section-label">Summary</p>', unsafe_allow_html=True)
 
         if st.button("Generate summary", key="summarize_btn"):
@@ -516,7 +564,7 @@ with col2:
             st.markdown(f"""
             <div class="summary-box">
                 <div class="summary-box-label">Summary</div>
-                <div style="font-size:14px;line-height:1.75;color:#3D3A35;">
+                <div style="font-size:14px;line-height:1.75;color:var(--text);">
                     {st.session_state.summary}
                 </div>
                 <div class="source-bar">{chips}</div>
@@ -525,21 +573,30 @@ with col2:
 
         st.markdown("---")
 
-        # ── CHAT ──
+        # ── CHAT (separate section) ──
         st.markdown('<p class="section-label">Ask the paper</p>', unsafe_allow_html=True)
 
         for msg in st.session_state.messages:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
-                if msg["role"] == "assistant" and msg.get("sources"):
-                    pages = sorted(set(
-                        c["page"] for c in msg["sources"] if "page" in c
-                    ))
-                    chips = "".join(f'<span class="source-chip">p. {p}</span>' for p in pages)
-                    st.markdown(
-                        f'<div class="source-bar">{chips}</div>',
-                        unsafe_allow_html=True
-                    )
+            role = msg["role"]
+            bubble_class = "user" if role == "user" else "assistant"
+            avatar_class  = "user-av" if role == "user" else "bot-av"
+            avatar_icon   = "👤" if role == "user" else "🔬"
+
+            source_html = ""
+            if role == "assistant" and msg.get("sources"):
+                pages = sorted(set(c["page"] for c in msg["sources"] if "page" in c))
+                chips = "".join(f'<span class="source-chip">p. {p}</span>' for p in pages)
+                source_html = f'<div class="source-bar">{chips}</div>'
+
+            st.markdown(f"""
+            <div class="chat-bubble {bubble_class}">
+                <div class="chat-avatar {avatar_class}">{avatar_icon}</div>
+                <div class="chat-body">
+                    {msg["content"]}
+                    {source_html}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
         user_input = st.chat_input("Ask anything about this paper…")
         if user_input:
