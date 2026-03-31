@@ -25,4 +25,4 @@ def chunk_text(pages_data, chunk_size=800, overlap=100):
 
             start += chunk_size - overlap
     
-    return chunks
+    return chunks   

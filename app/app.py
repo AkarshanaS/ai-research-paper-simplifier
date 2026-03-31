@@ -4,6 +4,7 @@ from src.pdf_downloader import download_pdf
 from src.text_extractor import extract_text
 from src.main import process_paper, answer_question, summarize_paper
 from services.paper_service import load_paper
+from services.comparison_service import compare_papers
 
 @st.cache_data(show_spinner=False)
 def cached_fetch(query):
@@ -182,6 +183,12 @@ st.markdown('<div class="subtitle">Understand research papers effortlessly using
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+if "paper_store" not in st.session_state:
+    st.session_state.paper_store = {}
+
+if "compare" not in st.session_state:
+    st.session_state.compare = None
+
 #sidebar
 with st.sidebar:
     st.title("📄 Summarize Paper")
@@ -244,6 +251,11 @@ with col1:
                     
                     index, chunks = cached_load_paper(paper_id=paper_id)
 
+                    paper_key = paper_id
+                    st.session_state.paper_store[paper_key] = {
+                        "index": index,
+                        "chunks": chunks
+                    }
                     st.session_state.index = index
                     st.session_state.chunks = chunks
                     st.session_state.messages = []
@@ -269,6 +281,12 @@ with col1:
 
                     index, chunks = process_paper(text)
 
+                    paper_key = paper_id
+                    st.session_state.paper_store[paper_key] = {
+                        "index": index,
+                        "chunks": chunks
+                    }
+
                     st.session_state.index = index
                     st.session_state.chunks = chunks
                     st.session_state.messages = []
@@ -277,9 +295,28 @@ with col1:
                 st.metric("Chunks", len(chunks))
                 st.metric("Embedding Dim", len(index[0]))
 
+        if st.session_state.paper_store:
+            st.markdown("###Stored Papers")
+            paper_ids = list(st.session_state.paper_store.keys())
+            selected_papers = st.multiselect("Select 2 papers to compare", paper_ids, max_selections=2)
+            if len(selected_papers) == 2:
+                if st.button("Compare Papers"):
+                    st.session_state.compare = selected_papers
+
 #right panel
 with col2:
     st.subheader("💬 Chat with Paper")
+
+    if st.session_state.compare:
+        p1, p2 = st.session_state.compare
+        paper1 = st.session_state.paper_store[p1]
+        paper2 = st.session_state.paper_store[p2]
+
+        with st.spinner("Comparing papers..."):
+            result = compare_papers(paper1, paper2, mode)
+
+        st.markdown("### Comparison Result")
+        st.markdown(result)
 
     if "index" in st.session_state:
         
