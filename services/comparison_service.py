@@ -21,11 +21,19 @@ Paper 1:
 Paper 2:
 {text2}
 
-Provide:
-- Key Idea comparison
-- Methods comparison
-- Strengths & weaknesses
-- When to use each
+Format your response EXACTLY like this:
+
+## 🔑 Key Idea Comparison
+- ...
+
+## ⚙️ Methods Comparison
+- ...
+
+## ✅ Strengths & Weaknesses
+- ...
+
+## 🎯 When to Use Each
+- ...
 """
 
     response = generate_answer(query, [text1, text2], mode)

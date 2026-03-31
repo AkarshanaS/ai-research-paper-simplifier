@@ -296,10 +296,12 @@ with col1:
                 st.metric("Embedding Dim", len(index[0]))
 
         if st.session_state.paper_store:
-            st.markdown("###Stored Papers")
+            st.markdown("---")
+            st.markdown("### Stored Papers")
             paper_ids = list(st.session_state.paper_store.keys())
             selected_papers = st.multiselect("Select 2 papers to compare", paper_ids, max_selections=2)
             if len(selected_papers) == 2:
+                st.markdown("<br>", unsafe_allow_html=True)
                 if st.button("Compare Papers"):
                     st.session_state.compare = selected_papers
 
@@ -316,7 +318,18 @@ with col2:
             result = compare_papers(paper1, paper2, mode)
 
         st.markdown("### Comparison Result")
-        st.markdown(result)
+        st.markdown(f"""
+                    <div style='
+                    background: rgba(255, 255, 255, 0.06);
+                    padding: 20px;
+                    color: #F9FAFB;
+                    line-height: 1.7;
+                    border-radius: 14px;
+                    margin-top: 10px;
+                    '>
+                    {result}
+                    </div>
+                    """, unsafe_allow_html=True)
 
     if "index" in st.session_state:
         
