@@ -23,7 +23,7 @@ Paper 2:
 
 Format your response EXACTLY like this:
 
-## 🔑 Key Idea Comparison
+##  🔑 Key Idea Comparison
 - ...
 
 ## ⚙️ Methods Comparison
