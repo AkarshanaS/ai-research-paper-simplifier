@@ -60,8 +60,54 @@ button {
     background: linear-gradient(90deg, #6C63FF, #00C9A7) !important;
     color: white !important;
 }
+            /* TEXT COLORS (restore personality) */
+.stMarkdown {
+    color: #F9FAFB !important;
+}
+
+h1, h2, h3 {
+    color: #E0E7FF !important;
+}
+
+/* GRADIENT TITLES */
+.main-title {
+    text-align: center;
+    font-size: 42px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #6C63FF, #00C9A7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* CARDS */
+.card {
+    background: rgba(255,255,255,0.05);
+    padding: 18px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* SECTION TITLE */
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #A5B4FC;
+}
 </style>
 """, unsafe_allow_html=True)
+
+colA, colB = st.columns([3,1])
+
+with colA:
+    st.markdown("###  Load & Explore Papers")
+
+with colB:
+    mode = st.selectbox(
+        "Explanation Style",
+        ["Simple", "Normal", "Technical"]
+    )
 
 # ---------------- HEADER ----------------
 st.markdown("<h1 style='text-align:center;'>AI Research Paper Simplifier</h1>", unsafe_allow_html=True)
@@ -167,22 +213,20 @@ with col2:
             st.session_state.paper_store[p2],
             mode
         )
-
+        st.markdown("---")
         st.markdown("##  Paper Comparison")
 
         sections = result.split("\n\n")
-
+        
         for sec in sections:
+            lines = sec.split("\n")
+            title = lines[0].strip()
+            content = "\n".join(lines[1:]).strip()
             st.markdown(
                 f"""
-                <div style='
-                background: rgba(255,255,255,0.06);
-                padding: 16px;
-                border-radius: 12px;
-                margin-bottom: 12px;
-                color: #F9FAFB;
-                '>
-                {sec}
+                <div class="card">
+                    <div class="section-title">{title}</div>
+                    <div>{content}</div>
                 </div>
                 """,
                 unsafe_allow_html=True
