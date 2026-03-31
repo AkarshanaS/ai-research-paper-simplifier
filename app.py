@@ -123,12 +123,6 @@ if "paper_store" not in st.session_state:
 if "compare" not in st.session_state:
     st.session_state.compare = None
 
-# ---------------- SIDEBAR ----------------
-with st.sidebar:
-    st.title(" Settings")
-
-    mode = st.selectbox("Explanation Style", ["Simple", "Normal", "Technical"])
-
 # ---------------- LAYOUT ----------------
 col1, col2 = st.columns(2)
 
