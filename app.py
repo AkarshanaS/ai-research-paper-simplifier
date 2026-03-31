@@ -26,9 +26,18 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
 
-/* ── Reset & Base ── */
+:root {
+    --bg:         #0D1117;
+    --surface:    #161B26;
+    --surface2:   #1C2232;
+    --border:     #263048;
+    --accent:     #E8A830;
+    --text:       #D8DCE8;
+    --text-muted: #6A738A;
+}
+
 html, body, [data-testid="stAppViewContainer"] {
-    background-color: #F5F2EE !important;
+    background-color: var(--bg) !important;
     font-family: 'DM Sans', sans-serif;
 }
 
@@ -40,24 +49,22 @@ html, body, [data-testid="stAppViewContainer"] {
     margin: 0 auto;
 }
 
-/* ── Typography ── */
 h1, h2, h3 {
     font-family: 'Instrument Serif', serif !important;
-    color: #1C1916 !important;
+    color: var(--text) !important;
     font-weight: 400 !important;
 }
 
 p, label, span, div {
     font-family: 'DM Sans', sans-serif !important;
-    color: #3D3A35 !important;
+    color: var(--text) !important;
 }
 
-/* ── Header ── */
 .paperlens-header {
     display: flex;
     align-items: baseline;
     gap: 12px;
-    border-bottom: 1.5px solid #1C1916;
+    border-bottom: 1px solid var(--border);
     padding-bottom: 1rem;
     margin-bottom: 2.5rem;
 }
@@ -65,24 +72,23 @@ p, label, span, div {
 .paperlens-wordmark {
     font-family: 'Instrument Serif', serif;
     font-size: 28px;
-    color: #1C1916;
+    color: var(--accent);
     letter-spacing: -0.5px;
 }
 
 .paperlens-tagline {
     font-size: 13px;
-    color: #8A8278;
+    color: var(--text-muted);
     font-style: italic;
     font-family: 'Instrument Serif', serif !important;
 }
 
-/* ── Inputs ── */
 .stTextInput > div > div > input,
 .stTextArea > div > div > textarea {
-    background: #FDFBF8 !important;
-    border: 1px solid #C9C4BC !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 8px !important;
-    color: #1C1916 !important;
+    color: var(--text) !important;
     font-family: 'DM Sans', sans-serif !important;
     font-size: 14px !important;
     padding: 10px 14px !important;
@@ -91,22 +97,20 @@ p, label, span, div {
 
 .stTextInput > div > div > input:focus,
 .stTextArea > div > div > textarea:focus {
-    border-color: #6B5B3E !important;
-    box-shadow: 0 0 0 3px rgba(107, 91, 62, 0.12) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(232,168,48,0.15) !important;
 }
 
-/* ── Selectbox ── */
 .stSelectbox > div > div {
-    background: #FDFBF8 !important;
-    border: 1px solid #C9C4BC !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 8px !important;
-    color: #1C1916 !important;
+    color: var(--text) !important;
 }
 
-/* ── Buttons ── */
 .stButton > button {
-    background: #1C1916 !important;
-    color: #F5F2EE !important;
+    background: var(--accent) !important;
+    color: #0D1117 !important;
     border: none !important;
     border-radius: 8px !important;
     font-family: 'DM Sans', sans-serif !important;
@@ -117,29 +121,25 @@ p, label, span, div {
     transition: background 0.15s ease !important;
 }
 
-/* Streamlit wraps button text in p/span — override those too */
 .stButton > button p,
 .stButton > button span,
 .stButton > button div {
-    color: #F5F2EE !important;
+    color: #0D1117 !important;
     font-weight: 500 !important;
 }
 
-.stButton > button:hover {
-    background: #3D3A35 !important;
-}
+.stButton > button:hover { background: #F5B830 !important; }
 
-/* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"] {
     background: transparent !important;
-    border-bottom: 1px solid #C9C4BC !important;
+    border-bottom: 1px solid var(--border) !important;
     gap: 0 !important;
 }
 
 .stTabs [data-baseweb="tab"] {
     font-family: 'DM Sans', sans-serif !important;
     font-size: 13px !important;
-    color: #8A8278 !important;
+    color: var(--text-muted) !important;
     background: transparent !important;
     border: none !important;
     padding: 8px 18px !important;
@@ -147,122 +147,89 @@ p, label, span, div {
 }
 
 .stTabs [aria-selected="true"] {
-    color: #1C1916 !important;
+    color: var(--accent) !important;
     font-weight: 500 !important;
-    border-bottom: 2px solid #1C1916 !important;
+    border-bottom: 2px solid var(--accent) !important;
 }
 
-/* ── Cards ── */
-.paper-card {
-    background: #FDFBF8;
-    border: 1px solid #DDD9D3;
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 10px;
-}
-
-.paper-card-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: #1C1916;
-    margin-bottom: 4px;
-}
-
-.paper-card-meta {
-    font-size: 12px;
-    color: #8A8278;
-}
-
-/* ── Section header ── */
 .section-label {
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #8A8278;
+    color: var(--text-muted);
     margin-bottom: 12px;
 }
 
-/* ── Loaded paper pill ── */
 .paper-pill {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: #EAE7E2;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 5px 12px;
+    padding: 4px 12px;
     font-size: 12px;
-    color: #3D3A35;
+    color: var(--text-muted);
     margin: 4px 4px 4px 0;
 }
 
-/* ── Comparison table ── */
-.compare-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    margin-top: 8px;
-}
+.compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 
 .compare-table th {
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.8px;
     text-transform: uppercase;
-    color: #8A8278;
-    padding: 8px 12px;
+    color: var(--text-muted);
+    padding: 10px 14px;
     text-align: left;
-    border-bottom: 1px solid #DDD9D3;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
 }
 
 .compare-table td {
-    padding: 14px 12px;
+    padding: 14px;
     vertical-align: top;
-    border-bottom: 1px solid #EAE7E2;
-    color: #3D3A35;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
     line-height: 1.65;
 }
 
 .compare-table td:first-child {
     font-weight: 500;
-    color: #1C1916;
-    width: 22%;
+    color: var(--accent);
+    width: 20%;
     white-space: nowrap;
 }
 
-.compare-table tr:last-child td {
-    border-bottom: none;
-}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(232,168,48,0.03); }
 
-.compare-table tr:hover td {
-    background: rgba(28,25,22,0.02);
-}
-
-/* ── Source citation chips ── */
 .source-bar {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid #EAE7E2;
+    border-top: 1px solid var(--border);
 }
 
 .source-chip {
-    background: #EAE7E2;
+    background: var(--surface2);
+    border: 1px solid var(--border);
     border-radius: 6px;
     padding: 3px 10px;
     font-size: 11px;
-    color: #5C5850;
+    color: var(--accent);
     font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.3px;
 }
 
-/* ── Summary box ── */
 .summary-box {
-    background: #FDFBF8;
-    border: 1px solid #DDD9D3;
-    border-left: 3px solid #1C1916;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
     border-radius: 0 12px 12px 0;
     padding: 20px 22px;
     margin-bottom: 20px;
@@ -273,66 +240,81 @@ p, label, span, div {
     font-weight: 500;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #8A8278;
+    color: var(--accent);
     margin-bottom: 10px;
 }
 
 .summary-box p, .summary-box li {
     font-size: 14px !important;
     line-height: 1.75 !important;
-    color: #3D3A35 !important;
+    color: var(--text) !important;
 }
 
-/* ── Chat ── */
 .stChatMessage {
-    background: #FDFBF8 !important;
-    border: 1px solid #EAE7E2 !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 12px !important;
+}
+
+/* Hide Material icon avatars, collapse the wasted column */
+[data-testid="chatAvatarIcon-user"],
+[data-testid="chatAvatarIcon-assistant"] { display: none !important; }
+
+[data-testid="stChatMessage"] > div:first-child {
+    min-width: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
 }
 
 [data-testid="stChatMessageContent"] p {
     font-size: 14px !important;
     line-height: 1.7 !important;
+    color: var(--text) !important;
 }
 
-/* ── Success / Info ── */
-.stSuccess {
-    background: #EDF5EC !important;
-    border: 1px solid #B6D9B2 !important;
+[data-testid="stChatInput"] > div {
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+}
+
+[data-testid="stChatInput"] textarea {
+    color: var(--text) !important;
+    background: transparent !important;
+}
+
+.stSuccess > div {
+    background: rgba(50,180,80,0.08) !important;
+    border: 1px solid rgba(50,180,80,0.25) !important;
     border-radius: 8px !important;
-    color: #1E4D1B !important;
+    color: #7ED99A !important;
 }
 
-.stInfo {
-    background: #EAE7E2 !important;
-    border: 1px solid #C9C4BC !important;
+.stInfo > div {
+    background: var(--surface2) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 8px !important;
-    color: #3D3A35 !important;
+    color: var(--text-muted) !important;
 }
 
-/* ── Multiselect ── */
 .stMultiSelect > div > div {
-    background: #FDFBF8 !important;
-    border: 1px solid #C9C4BC !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 8px !important;
 }
 
-/* ── Divider ── */
 hr {
     border: none !important;
-    border-top: 1px solid #DDD9D3 !important;
+    border-top: 1px solid var(--border) !important;
     margin: 1.5rem 0 !important;
 }
 
-/* ── Subheader override ── */
-.stSubheader {
-    font-family: 'Instrument Serif', serif !important;
-    font-size: 20px !important;
-    font-weight: 400 !important;
-    color: #1C1916 !important;
-}
+.stSpinner > div { border-top-color: var(--accent) !important; }
 </style>
 """, unsafe_allow_html=True)
+
+
 
 # ── Header ──
 st.markdown("""
@@ -446,24 +428,30 @@ with col2:
         result = st.session_state.compare_result
 
         def clean(text):
-            """Strip markdown bold/italic markers."""
-            return re.sub(r'\*{1,2}(.*?)\*{1,2}', r'\1', text).strip()
+            """Strip markdown bold/italic/heading markers."""
+            text = re.sub(r'\*{1,2}(.*?)\*{1,2}', r'\1', text)
+            text = re.sub(r'^#{1,4}\s*', '', text)
+            return text.strip()
 
-        # Parse into rows: extract lines starting with "- Paper 1:" / "- Paper 2:"
-        # The LLM returns sections separated by double newlines, each with a header + 2 bullet lines.
+        # Split on blank lines 
+        # start with letters, *, #, or any other character.
         rows = []
-        sections = re.split(r'\n(?=\w)', result.strip())
+        sections = re.split(r'\n\s*\n', result.strip())
         for sec in sections:
-            lines = [l.strip() for l in sec.strip().splitlines() if l.strip()]
-            if not lines:
+            raw_lines = [l.strip() for l in sec.strip().splitlines() if l.strip()]
+            if not raw_lines:
                 continue
-            heading = clean(lines[0]).rstrip(":")
+            heading = clean(raw_lines[0]).rstrip(":")
+            # Skip if heading looks like a stray bullet rather than a real section title
+            if heading.lower().startswith("paper"):
+                continue
             p1_text, p2_text = "", ""
-            for line in lines[1:]:
-                line_clean = clean(line).lstrip("-• ").strip()
-                if line_clean.lower().startswith("paper 1:"):
+            for line in raw_lines[1:]:
+                line_clean = clean(line).lstrip("-–•* ").strip()
+                lo = line_clean.lower()
+                if lo.startswith("paper 1:"):
                     p1_text = line_clean[8:].strip()
-                elif line_clean.lower().startswith("paper 2:"):
+                elif lo.startswith("paper 2:"):
                     p2_text = line_clean[8:].strip()
             if heading and (p1_text or p2_text):
                 rows.append((heading, p1_text, p2_text))
@@ -479,7 +467,7 @@ with col2:
                 </tr>"""
 
             st.markdown(f"""
-            <div style="background:#FDFBF8;border:1px solid #DDD9D3;border-radius:12px;overflow:hidden;margin-bottom:20px;">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;">
                 <table class="compare-table">
                     <thead>
                         <tr>
@@ -493,15 +481,18 @@ with col2:
             </div>
             """, unsafe_allow_html=True)
         else:
-            # Fallback: just render cleaned text
-            st.markdown(f'<div style="font-size:14px;line-height:1.7;color:#3D3A35;">{clean(result)}</div>', unsafe_allow_html=True)
+            # Fallback: render cleaned plain text if parsing yields nothing
+            st.markdown(
+                f'<div style="font-size:14px;line-height:1.7;color:var(--text);">{clean(result)}</div>',
+                unsafe_allow_html=True
+            )
 
         st.markdown("---")
 
     # ── Paper loaded ──
     if "index" in st.session_state:
 
-        # ── SUMMARY (separate from chat) ──
+        # ── SUMMARY ──
         st.markdown('<p class="section-label">Summary</p>', unsafe_allow_html=True)
 
         if st.button("Generate summary", key="summarize_btn"):
@@ -534,7 +525,7 @@ with col2:
 
         st.markdown("---")
 
-        # ── CHAT (separate section) ──
+        # ── CHAT ──
         st.markdown('<p class="section-label">Ask the paper</p>', unsafe_allow_html=True)
 
         for msg in st.session_state.messages:
