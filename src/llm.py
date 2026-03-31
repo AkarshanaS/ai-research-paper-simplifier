@@ -26,6 +26,7 @@ Rules:
 -If the answer is not in the context, say you don't know.
 -Explain clearly and structure your response
 -Use bullet points for lists and key information.
+-Do NOT use HTML tags like <div>, <p>, <br>. Return only plain text.
 
 
 Context:{context}\n\nQuestion: {query}\nAnswer:"""

@@ -5,6 +5,7 @@ from src.text_extractor import extract_text
 from src.main import process_paper, answer_question, summarize_paper
 from services.paper_service import load_paper
 from services.comparison_service import compare_papers
+import html
 
 @st.cache_data(show_spinner=False)
 def cached_fetch(query):
@@ -587,12 +588,15 @@ with col2:
                 pages = sorted(set(c["page"] for c in msg["sources"] if "page" in c))
                 chips = "".join(f'<span class="source-chip">p. {p}</span>' for p in pages)
                 source_html = f'<div class="source-bar">{chips}</div>'
+            
+            safe_content =  html.escape(msg["content"])
 
             st.markdown(f"""
             <div class="chat-bubble {bubble_class}">
                 <div class="chat-avatar {avatar_class}">{avatar_icon}</div>
                 <div class="chat-body">
-                    {msg["content"]}
+                    )
+                    {safe_content}
                     {source_html}
                 </div>
             </div>
