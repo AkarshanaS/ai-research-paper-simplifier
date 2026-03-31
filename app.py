@@ -117,19 +117,16 @@ p, label, span, div {
     transition: background 0.15s ease !important;
 }
 
-.stButton > button:hover {
-    background: #3D3A35 !important;
+/* Streamlit wraps button text in p/span — override those too */
+.stButton > button p,
+.stButton > button span,
+.stButton > button div {
+    color: #F5F2EE !important;
+    font-weight: 500 !important;
 }
 
-/* Secondary button style — apply via st.markdown wrapping */
-.btn-outline .stButton > button {
-    background: transparent !important;
-    color: #1C1916 !important;
-    border: 1px solid #C9C4BC !important;
-}
-.btn-outline .stButton > button:hover {
-    border-color: #1C1916 !important;
-    background: rgba(28,25,22,0.04) !important;
+.stButton > button:hover {
+    background: #3D3A35 !important;
 }
 
 /* ── Tabs ── */
@@ -200,22 +197,90 @@ p, label, span, div {
     margin: 4px 4px 4px 0;
 }
 
-/* ── Comparison section ── */
-.compare-block {
-    background: #FDFBF8;
-    border: 1px solid #DDD9D3;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 14px;
+/* ── Comparison table ── */
+.compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 8px;
 }
 
-.compare-block-title {
-    font-family: 'Instrument Serif', serif;
-    font-size: 17px;
-    color: #1C1916;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
+.compare-table th {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #8A8278;
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #DDD9D3;
+}
+
+.compare-table td {
+    padding: 14px 12px;
+    vertical-align: top;
     border-bottom: 1px solid #EAE7E2;
+    color: #3D3A35;
+    line-height: 1.65;
+}
+
+.compare-table td:first-child {
+    font-weight: 500;
+    color: #1C1916;
+    width: 22%;
+    white-space: nowrap;
+}
+
+.compare-table tr:last-child td {
+    border-bottom: none;
+}
+
+.compare-table tr:hover td {
+    background: rgba(28,25,22,0.02);
+}
+
+/* ── Source citation chips ── */
+.source-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #EAE7E2;
+}
+
+.source-chip {
+    background: #EAE7E2;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: #5C5850;
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Summary box ── */
+.summary-box {
+    background: #FDFBF8;
+    border: 1px solid #DDD9D3;
+    border-left: 3px solid #1C1916;
+    border-radius: 0 12px 12px 0;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+}
+
+.summary-box-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #8A8278;
+    margin-bottom: 10px;
+}
+
+.summary-box p, .summary-box li {
+    font-size: 14px !important;
+    line-height: 1.75 !important;
+    color: #3D3A35 !important;
 }
 
 /* ── Chat ── */
@@ -359,6 +424,8 @@ with col1:
                 if st.button("Compare papers →", key="compare_btn"):
                     st.session_state.compare = selected
 
+import re, json
+
 # ═══════════════ RIGHT PANEL ═══════════════
 with col2:
 
@@ -366,47 +433,122 @@ with col2:
     if st.session_state.compare:
         p1, p2 = st.session_state.compare
         st.markdown('<p class="section-label">Comparison</p>', unsafe_allow_html=True)
-        with st.spinner("Comparing papers…"):
-            result = compare_papers(
-                st.session_state.paper_store[p1],
-                st.session_state.paper_store[p2],
-                mode
-            )
 
-        sections = result.strip().split("\n\n")
-        for sec in sections:
-            lines = sec.split("\n")
-            title = lines[0].strip().rstrip(":")
-            content = "\n".join(lines[1:]).strip()
-            st.markdown(
-                f'<div class="compare-block">'
-                f'<div class="compare-block-title">{title}</div>'
-                f'<div style="font-size:14px;line-height:1.7;color:#3D3A35;">{content}</div>'
-                f'</div>',
-                unsafe_allow_html=True
-            )
-        st.markdown("---")
-
-    # ── Chat interface ──
-    if "index" in st.session_state:
-        st.markdown('<p class="section-label">Chat with paper</p>', unsafe_allow_html=True)
-
-        if st.button("Summarize paper", key="summarize_btn"):
-            with st.spinner("Generating summary…"):
-                summary, sources = summarize_paper(
-                    st.session_state.index,
-                    st.session_state.chunks,
+        if "compare_result" not in st.session_state or st.session_state.get("compare_ids") != tuple(st.session_state.compare):
+            with st.spinner("Comparing papers…"):
+                st.session_state.compare_result = compare_papers(
+                    st.session_state.paper_store[p1],
+                    st.session_state.paper_store[p2],
                     mode
                 )
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": summary,
-                    "sources": sources
-                })
+                st.session_state.compare_ids = tuple(st.session_state.compare)
+
+        result = st.session_state.compare_result
+
+        def clean(text):
+            """Strip markdown bold/italic markers."""
+            return re.sub(r'\*{1,2}(.*?)\*{1,2}', r'\1', text).strip()
+
+        # Parse into rows: extract lines starting with "- Paper 1:" / "- Paper 2:"
+        # The LLM returns sections separated by double newlines, each with a header + 2 bullet lines.
+        rows = []
+        sections = re.split(r'\n(?=\w)', result.strip())
+        for sec in sections:
+            lines = [l.strip() for l in sec.strip().splitlines() if l.strip()]
+            if not lines:
+                continue
+            heading = clean(lines[0]).rstrip(":")
+            p1_text, p2_text = "", ""
+            for line in lines[1:]:
+                line_clean = clean(line).lstrip("-• ").strip()
+                if line_clean.lower().startswith("paper 1:"):
+                    p1_text = line_clean[8:].strip()
+                elif line_clean.lower().startswith("paper 2:"):
+                    p2_text = line_clean[8:].strip()
+            if heading and (p1_text or p2_text):
+                rows.append((heading, p1_text, p2_text))
+
+        if rows:
+            table_rows = ""
+            for label, v1, v2 in rows:
+                table_rows += f"""
+                <tr>
+                    <td>{label}</td>
+                    <td>{v1 or "—"}</td>
+                    <td>{v2 or "—"}</td>
+                </tr>"""
+
+            st.markdown(f"""
+            <div style="background:#FDFBF8;border:1px solid #DDD9D3;border-radius:12px;overflow:hidden;margin-bottom:20px;">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>{p1}</th>
+                            <th>{p2}</th>
+                        </tr>
+                    </thead>
+                    <tbody>{table_rows}</tbody>
+                </table>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            # Fallback: just render cleaned text
+            st.markdown(f'<div style="font-size:14px;line-height:1.7;color:#3D3A35;">{clean(result)}</div>', unsafe_allow_html=True)
+
+        st.markdown("---")
+
+    # ── Paper loaded ──
+    if "index" in st.session_state:
+
+        # ── SUMMARY (separate from chat) ──
+        st.markdown('<p class="section-label">Summary</p>', unsafe_allow_html=True)
+
+        if st.button("Generate summary", key="summarize_btn"):
+            with st.spinner("Reading the paper…"):
+                try:
+                    summary, sources = summarize_paper(
+                        st.session_state.index,
+                        st.session_state.chunks,
+                        mode
+                    )
+                    st.session_state.summary = summary
+                    st.session_state.summary_sources = sources
+                except Exception as e:
+                    st.error(f"Error: {e}")
+
+        if "summary" in st.session_state:
+            pages = sorted(set(
+                c["page"] for c in st.session_state.summary_sources if "page" in c
+            ))
+            chips = "".join(f'<span class="source-chip">p. {p}</span>' for p in pages)
+            st.markdown(f"""
+            <div class="summary-box">
+                <div class="summary-box-label">Summary</div>
+                <div style="font-size:14px;line-height:1.75;color:#3D3A35;">
+                    {st.session_state.summary}
+                </div>
+                <div class="source-bar">{chips}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("---")
+
+        # ── CHAT (separate section) ──
+        st.markdown('<p class="section-label">Ask the paper</p>', unsafe_allow_html=True)
 
         for msg in st.session_state.messages:
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
+                if msg["role"] == "assistant" and msg.get("sources"):
+                    pages = sorted(set(
+                        c["page"] for c in msg["sources"] if "page" in c
+                    ))
+                    chips = "".join(f'<span class="source-chip">p. {p}</span>' for p in pages)
+                    st.markdown(
+                        f'<div class="source-bar">{chips}</div>',
+                        unsafe_allow_html=True
+                    )
 
         user_input = st.chat_input("Ask anything about this paper…")
         if user_input:
@@ -427,6 +569,7 @@ with col2:
                     st.rerun()
                 except Exception as e:
                     st.error(f"Error generating answer: {e}")
+
     else:
         st.markdown("""
         <div style="margin-top:3rem;text-align:center;padding:2rem;">
