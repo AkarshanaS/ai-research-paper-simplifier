@@ -5,7 +5,6 @@ from src.text_extractor import extract_text
 from src.main import process_paper, answer_question, summarize_paper
 from services.paper_service import load_paper
 from services.comparison_service import compare_papers
-import html
 
 @st.cache_data(show_spinner=False)
 def cached_fetch(query):
@@ -77,19 +76,33 @@ footer { display: none !important; }
 .chat-avatar.user-av { background: var(--surface2); }
 .chat-avatar.bot-av  { background: rgba(232,168,48,0.12); border-color: rgba(232,168,48,0.3); }
 
-.chat-body {
+.chat-body-wrap {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 12px 16px;
     max-width: 85%;
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--text);
+    min-width: 120px;
+    flex: 1;
 }
 
-.chat-bubble.user .chat-body {
+.chat-body-wrap p,
+.chat-body-wrap li,
+.chat-body-wrap span,
+.chat-body-wrap div {
+    font-size: 14px !important;
+    line-height: 1.7 !important;
+    color: var(--text) !important;
+}
+
+.chat-bubble.user .chat-body-wrap {
     background: var(--surface2);
+}
+
+[data-testid="stChatInput"] textarea,
+[data-testid="stChatInput"] textarea::placeholder {
+    color: var(--text) !important;
+    font-size: 14px !important;
 }
 
 [data-testid="stMainBlockContainer"] {
@@ -482,7 +495,7 @@ with col2:
             text = re.sub(r'^#{1,4}\s*', '', text)
             return text.strip()
 
-        # Split on blank lines — works regardless of whether sections
+        # Split on blank lines 
         # start with letters, *, #, or any other character.
         rows = []
         sections = re.split(r'\n\s*\n', result.strip())
@@ -491,7 +504,7 @@ with col2:
             if not raw_lines:
                 continue
             heading = clean(raw_lines[0]).rstrip(":")
-            # Skip if heading looks like a stray bullet rather than a real section title
+           
             if heading.lower().startswith("paper"):
                 continue
             p1_text, p2_text = "", ""
@@ -579,28 +592,27 @@ with col2:
 
         for msg in st.session_state.messages:
             role = msg["role"]
-            bubble_class = "user" if role == "user" else "assistant"
-            avatar_class  = "user-av" if role == "user" else "bot-av"
-            avatar_icon   = "👤" if role == "user" else "🔬"
+            is_user = role == "user"
+            avatar_class = "user-av" if is_user else "bot-av"
+            avatar_icon  = "👤" if is_user else "🔬"
+            bubble_class = "user" if is_user else "assistant"
 
-            source_html = ""
-            if role == "assistant" and msg.get("sources"):
-                pages = sorted(set(c["page"] for c in msg["sources"] if "page" in c))
-                chips = "".join(f'<span class="source-chip">p. {p}</span>' for p in pages)
-                source_html = f'<div class="source-bar">{chips}</div>'
             
-            safe_content =  html.escape(msg["content"])
-
             st.markdown(f"""
             <div class="chat-bubble {bubble_class}">
                 <div class="chat-avatar {avatar_class}">{avatar_icon}</div>
-                <div class="chat-body">
-                    
-                    {safe_content}
-                    {source_html}
-                </div>
-            </div>
+                <div class="chat-body-wrap">
             """, unsafe_allow_html=True)
+
+            
+            st.markdown(msg["content"])
+
+            if not is_user and msg.get("sources"):
+                pages = sorted(set(c["page"] for c in msg["sources"] if "page" in c))
+                chips = "".join(f'<span class="source-chip">p. {p}</span>' for p in pages)
+                st.markdown(f'<div class="source-bar">{chips}</div>', unsafe_allow_html=True)
+
+            st.markdown("</div></div>", unsafe_allow_html=True)
 
         user_input = st.chat_input("Ask anything about this paper…")
         if user_input:
