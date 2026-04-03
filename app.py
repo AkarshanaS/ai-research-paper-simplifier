@@ -52,51 +52,29 @@ header[data-testid="stHeader"],
 footer { display: none !important; }
 
 /* ── Custom chat bubbles ── */
-.chat-bubble {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    margin-bottom: 14px;
+/* ── Chat messages via st.chat_message ── */
+[data-testid="stChatMessage"] {
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+    padding: 10px 14px !important;
+    margin-bottom: 10px !important;
 }
 
-.chat-bubble.user { flex-direction: row-reverse; }
-
-.chat-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    flex-shrink: 0;
-    border: 1px solid var(--border);
-}
-
-.chat-avatar.user-av { background: var(--surface2); }
-.chat-avatar.bot-av  { background: rgba(232,168,48,0.12); border-color: rgba(232,168,48,0.3); }
-
-.chat-body-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 16px;
-    max-width: 85%;
-    min-width: 120px;
-    flex: 1;
-}
-
-.chat-body-wrap p,
-.chat-body-wrap li,
-.chat-body-wrap span,
-.chat-body-wrap div {
+[data-testid="stChatMessage"] p,
+[data-testid="stChatMessage"] li {
     font-size: 14px !important;
     line-height: 1.7 !important;
     color: var(--text) !important;
 }
 
-.chat-bubble.user .chat-body-wrap {
-    background: var(--surface2);
+/* Avatar emoji sizing */
+[data-testid="stChatMessageAvatarUser"],
+[data-testid="stChatMessageAvatarAssistant"] {
+    font-size: 20px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 [data-testid="stChatInput"] textarea,
@@ -318,22 +296,7 @@ p, label, span, div {
     border-radius: 12px !important;
 }
 
-/* Hide Material icon avatars, collapse the wasted column */
-[data-testid="chatAvatarIcon-user"],
-[data-testid="chatAvatarIcon-assistant"] { display: none !important; }
-
-[data-testid="stChatMessage"] > div:first-child {
-    min-width: 0 !important;
-    width: 0 !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-}
-
-[data-testid="stChatMessageContent"] p {
-    font-size: 14px !important;
-    line-height: 1.7 !important;
-    color: var(--text) !important;
-}
+/* Avatar set via st.chat_message(avatar=...) — no CSS override needed */
 
 [data-testid="stChatInput"] > div {
     background: var(--surface) !important;
@@ -504,7 +467,7 @@ with col2:
             if not raw_lines:
                 continue
             heading = clean(raw_lines[0]).rstrip(":")
-           
+            
             if heading.lower().startswith("paper"):
                 continue
             p1_text, p2_text = "", ""
@@ -591,28 +554,14 @@ with col2:
         st.markdown('<p class="section-label">Ask the paper</p>', unsafe_allow_html=True)
 
         for msg in st.session_state.messages:
-            role = msg["role"]
-            is_user = role == "user"
-            avatar_class = "user-av" if is_user else "bot-av"
-            avatar_icon  = "👤" if is_user else "🔬"
-            bubble_class = "user" if is_user else "assistant"
-
-            
-            st.markdown(f"""
-            <div class="chat-bubble {bubble_class}">
-                <div class="chat-avatar {avatar_class}">{avatar_icon}</div>
-                <div class="chat-body-wrap">
-            """, unsafe_allow_html=True)
-
-            
-            st.markdown(msg["content"])
-
-            if not is_user and msg.get("sources"):
-                pages = sorted(set(c["page"] for c in msg["sources"] if "page" in c))
-                chips = "".join(f'<span class="source-chip">p. {p}</span>' for p in pages)
-                st.markdown(f'<div class="source-bar">{chips}</div>', unsafe_allow_html=True)
-
-            st.markdown("</div></div>", unsafe_allow_html=True)
+            is_user = msg["role"] == "user"
+            avatar = "👤" if is_user else "🔬"
+            with st.chat_message(msg["role"], avatar=avatar):
+                st.markdown(msg["content"])
+                if not is_user and msg.get("sources"):
+                    pages = sorted(set(c["page"] for c in msg["sources"] if "page" in c))
+                    chips = "".join(f'<span class="source-chip">p. {p}</span>' for p in pages)
+                    st.markdown(f'<div class="source-bar">{chips}</div>', unsafe_allow_html=True)
 
         user_input = st.chat_input("Ask anything about this paper…")
         if user_input:
