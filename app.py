@@ -77,12 +77,6 @@ footer { display: none !important; }
     box-shadow: none !important;
 }
 
-[data-testid="stChatInput"] textarea,
-[data-testid="stChatInput"] textarea::placeholder {
-    color: var(--text) !important;
-    font-size: 14px !important;
-}
-
 [data-testid="stMainBlockContainer"] {
     padding: 2rem 3rem;
     max-width: 1200px;
@@ -296,17 +290,24 @@ p, label, span, div {
     border-radius: 12px !important;
 }
 
-/* Avatar set via st.chat_message(avatar=...) — no CSS override needed */
-
-[data-testid="stChatInput"] > div {
+/* ── Chat input ── */
+[data-testid="stChatInput"],
+[data-testid="stChatInput"] > div,
+[data-testid="stChatInput"] > div > div {
     background: var(--surface) !important;
     border: 1px solid var(--border) !important;
     border-radius: 12px !important;
 }
 
 [data-testid="stChatInput"] textarea {
+    background: var(--surface) !important;
     color: var(--text) !important;
-    background: transparent !important;
+    font-size: 14px !important;
+    caret-color: var(--accent) !important;
+}
+
+[data-testid="stChatInput"] textarea::placeholder {
+    color: var(--text-muted) !important;
 }
 
 .stSuccess > div {
