@@ -595,7 +595,7 @@ with col2:
             <div class="chat-bubble {bubble_class}">
                 <div class="chat-avatar {avatar_class}">{avatar_icon}</div>
                 <div class="chat-body">
-                    )
+                    
                     {safe_content}
                     {source_html}
                 </div>
